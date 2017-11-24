@@ -1,0 +1,98 @@
+{% extends "base2.html" %}
+
+{% block content %}
+    <div class="cartouche">
+        <h2>Movies matched waiting for validation</h2>
+        <p>New: {{ movies.total }}</p>
+    </div>
+
+    <div>
+        <p>{% include 'flash.html' %}</p>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span9">
+            <h1>Movies matched by {{ match_type_label }}</h1>
+            <hr/>
+        </div>
+    </div>
+    {% for d in movies.items %}
+        <div class="row-fluid">
+            <div class="span7">
+                <div class="span6">
+                    <h6>VDM version <small>( VDM_ID: {{ d.vdm_movie_id }})</small></h6>
+                    <p>
+                        <table class="data_detail_fields">
+                            <tr>
+                                <td class="span9">{{ d.vdm_original_title }}</td>
+                                <td><br/></td>
+                            </tr>
+                            <tr>
+                                <td class="field_label">Director: </td>
+                                <td>{{ d.vdm_directors }}</td>
+                            </tr>
+                            <tr>
+                                <td class="field_label">Production Year: </td>
+                                <td>{{ d.vdm_production_year }}</td>
+                            </tr>
+                            <!--<tr>
+                            <td class="field_label">RightHolder: </td>
+                            <td>\{\{ d.vdm_version_record.rh_version_record.usage_name }}</td>
+                            </tr> -->
+                        </table>
+                    </p>
+                </div>
+                <div class="span6">
+                    <h6>MAMA Version <small>( MAMA_ID: {{ d.mama_movie_id }})</small></h6>
+                    <p>
+                        <table class="data_detail_fields">
+                            <tr>
+                                <td class="span9">{{ d.mama_original_title }}</td>
+                                <td><br/></td>
+                            </tr>
+                            <tr>
+                                <td class="field_label">Director: </td>
+                                <td>{{ d.mama_directors }}</td>
+                            </tr>
+                            <tr>
+                                <td class="field_label">Production Year: </td>
+                                <td>{{ d.mama_production_year }}</td>
+                            </tr>
+                            <!--<tr>
+                            <td class="field_label">RightHolder: </td>
+                            <td>\{\{ d.vdm_version_record.rh_version_record.usage_name }}</td>
+                            </tr> -->
+                        </table>
+                    </p>
+                </div>
+            </div>
+            <div class="span2 action_buttons">
+                <form action="{{ url_for('movies', match_type=match_type, page=movies.page) }}" method="post" name="{{movies_forms[d.id].name}}">
+                    {{movies_forms[d.id].hidden_tag()}}
+                    <p><input type="submit" class="btn btn-primary" name="validate_link" value="Validate link" /></p>
+                    <p><input type="submit" class="btn btn-warning" name="invalidate_link" value="Invalidate link" /></p>
+                </form>
+            </div>
+        </div>
+        <hr/>
+    {% endfor %}
+
+    <div class="row-fluid">
+        <div class="span9 text-center">
+            {% if movies.has_prev %}
+                <a href="{{ url_for('movies', match_type= match_type, page = movies.prev_num) }}"><< Prev.</a>
+            {% endif %} | {% if movies.pages == 0 %} 1 | {% endif %}
+            {% for p in range(1,movies.pages+1) %}
+                {% if p == movies.page %} 
+                    {{ movies.page }} |
+                {% else %} 
+                    <a href="{{ url_for('movies', match_type= match_type, page = p) }}">{{ p }}</a> |
+                {% endif %}
+            {% endfor %}
+            {% if movies.has_next %}
+                <a href="{{ url_for('movies', match_type= match_type, page = movies.next_num) }}">Next >></a>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
